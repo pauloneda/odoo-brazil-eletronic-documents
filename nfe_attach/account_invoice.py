@@ -57,7 +57,7 @@ class AccountInvoiceInvalidNumber(orm.Model):
                 attachment_id = obj_attachment.create(cr, uid, {
                     'name': str_aux.format(key),
                     'datas': base64.b64encode(attc),
-                    'datas_fname': '.' + ext,
+                    'datas_fname': str_aux.format(key),
                     'description': '' or _('No Description'),
                     'res_model': 'l10n_br_account.invoice.invalid.number',
                     'res_id': obj.id
@@ -104,7 +104,7 @@ class AccountInvoice(orm.Model):
                 attachment_id = obj_attachment.create(cr, uid, {
                     'name': str_aux.format(nfe_key),
                     'datas': base64.b64encode(attc),
-                    'datas_fname': '.' + ext,
+                    'datas_fname': str_aux.format(nfe_key),
                     'description': '' or _('No Description'),
                     'res_model': 'account.invoice',
                     'res_id': inv.id
