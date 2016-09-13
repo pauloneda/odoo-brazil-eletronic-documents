@@ -1,7 +1,8 @@
 # -*- encoding: utf-8 -*-
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2015  Danimar Ribeiro www.trustcode.com.br                    #
+# Copyright (C) 2015  Luis Felipe Mileo - KMEE - www.kmee.com.br              #
+# Copyright (C) 2015  Rafael da Silva Lima - KMEE - www.kmee.com.br           #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU Affero General Public License as published by #
@@ -17,37 +18,27 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 ###############################################################################
 
-{
-    'name': 'Manifesto Destinatário NFe',
-    'version': '8.0.1.0.0',
-    'category': 'NFE',
-    'author': 'Danimar Ribeiro',
-    'license': 'AGPL-3',
-    'website': 'http://www.trustcode.com.br',
-    'description': """
-        Implementa a consulta de nfe periodicamente no SEFAZ
-      Este módulo serve para efetuar download de notas em que são destinada
-      a empresa.
-      Manifesta a ciência ou desconhecimento da NF-e
+from pysped.xml_sped.certificado import Certificado as PySpedCertificado
+import tempfile
+import base64
 
-      Dependencias: pysped, geraldo, pyxmlsec
-      Instalando pyxmlsec
-        sudo pip install pyxmlsec
-        Dependencias ->
-        sudo apt-get install libxmlsec1-dev
-        sudo apt-get install libxml2-dev
-      Instalando geraldo
-        sudo pip install geraldo
-    """,
-    'depends': [
-        'nfe',
-        'nfe_attach',
-    ],
-    'data': [
-        'security/ir.model.access.csv',
-        'data/nfe_schedule.xml',
-        'views/nfe_mde_view.xml'
-    ],
-    'installable': True,
-    'active': False,
-}
+
+class Certificado(PySpedCertificado):
+
+    def __init__(self, company):
+        super(Certificado, self).__init__()
+        self.certificado_file = self._caminho_certificado(company.nfe_a1_file)
+        self.senha = company.nfe_a1_password
+
+    def _caminho_certificado(self, nfe_a1_file):
+        """
+
+        :return: caminho do certificado
+        """
+        certificado_file = tempfile.NamedTemporaryFile()
+        certificado_file.seek(0)
+        certificado_file.write(
+            base64.decodestring(nfe_a1_file))
+        certificado_file.flush()
+        self.arquivo = certificado_file.name
+        return certificado_file

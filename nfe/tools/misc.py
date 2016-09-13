@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 ###############################################################################
 #
-# Copyright (C) 2014  Luis Felipe Mileo - KMEE, www.kmee.com.br
+# Copyright (C) 2016  Renato Lima - Akretion
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
@@ -17,6 +17,26 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ###############################################################################
 
-from . import l10n_br_account_document_status_sefaz
-from . import nfe_invoice_cce
-from . import nfe_invoice_cancel
+import os
+
+from openerp.tools import config
+from openerp.tools.translate import _
+from openerp.exceptions import RedirectWarning
+from openerp.addons.l10n_br_base.tools.misc import punctuation_rm
+
+
+def mount_path_nfe(company, document='nfe'):
+    db_name = company._cr.dbname
+    cnpj = punctuation_rm(company.cnpj_cpf)
+
+    filestore = config.filestore(db_name)
+    nfe_path = '/'.join([filestore, 'PySPED', document, cnpj])
+    if not os.path.exists(nfe_path):
+        try:
+            os.makedirs(nfe_path)
+        except OSError:
+            raise RedirectWarning(
+                _(u'Erro!'),
+                _(u"""Verifique as permissões de escrita
+                    e o caminho da pasta"""))
+    return nfe_path
