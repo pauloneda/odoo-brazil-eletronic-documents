@@ -34,8 +34,13 @@ class ResPartner(models.Model):
 
     @api.multi
     def sefaz_check(self):
+        
+        if not self.company_id:
+            company_id = self.env.user.company_id
+        else:
+            company_id = self.company_id
 
-        validate_nfe_configuration(self.company_id)
+        validate_nfe_configuration(company_id)
 
         for partner in self:
             if partner.cnpj_cpf:
@@ -45,7 +50,7 @@ class ResPartner(models.Model):
                 ie = partner.inscr_est or None
                 ie = ie if ie != 'ISENTO' else None
 
-                processo = check_partner(self.company_id, cnpj_cpf, estato, ie)
+                processo = check_partner(company_id, cnpj_cpf, estato, ie)
                 xml = processo.resposta.xml.encode('utf-8')
 
                 tree = ET.fromstring(xml)
