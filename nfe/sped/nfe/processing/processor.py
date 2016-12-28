@@ -17,27 +17,24 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 ###############################################################################
 
-
-from pysped.nfe import ProcessadorNFe as ProcessadorNFePySped
-from pysped.nfe.danfe import DANFE as DanfePySped
-from pysped.nfe.danfe import DAEDE
-
 from .certificado import Certificado
 
 from openerp.addons.nfe.tools.misc import mount_path_nfe
+
+import logging
+_logger = logging.getLogger(__name__)
+
+try:
+    from pysped.nfe import ProcessadorNFe as ProcessadorNFePySped
+    from pysped.nfe.danfe import DANFE as DanfePySped
+    from pysped.nfe.danfe import DAEDE
+except ImportError as exc:
+    logging.exception(exc.message)
 
 
 class DANFE(DanfePySped):
     def __init__(self):
         super(DANFE, self).__init__()
-
-    def gerar_danfe(self):
-        """
-        Remove a geração automática do DANFE para deixar o processo + leve
-        :return:
-        """
-        self.conteudo_pdf = ''
-        return
 
 
 class ProcessadorNFe(ProcessadorNFePySped):
